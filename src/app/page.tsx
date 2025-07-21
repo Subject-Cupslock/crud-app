@@ -1,6 +1,6 @@
 "use client";
+import { AddTransactionForm } from "@/components/AddTransactionForm";
 import { useQuery } from "@tanstack/react-query";
-import { loadComponents } from "next/dist/server/load-components";
 
 type Transactions = {
   id: string;
@@ -28,6 +28,7 @@ export default function Home() {
     <div className="p-4">
       <h1 className="text-xl font-bold mb-2">Транзакции</h1>
       <pre>{JSON.stringify(data, null, 2)}</pre>
+      <AddTransactionForm />
     </div>
   );
 }
