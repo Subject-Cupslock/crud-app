@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FormField } from "./FormField";
 
 const schema = z.object({
   date: z.string().nonempty("Укажите дату"),
@@ -22,8 +23,8 @@ export const AddTransactionForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
+    formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
@@ -53,76 +54,38 @@ export const AddTransactionForm = () => {
         Новая транзакция
       </h2>
 
-      <div>
-        <label className="block mb-1 font-medium">Дата</label>
-        <input
-          type="date"
-          {...register("date")}
-          className="w-full border border-neutral-300 px-3 py-2 bg-white focus:outline-none focus:border-black"
-        />
-        {errors.date && (
-          <p className="text-red-500 text-xs mt-1">{errors.date.message}</p>
-        )}
-      </div>
-
-      <div>
-        <label className="block mb-1 font-medium">Категория</label>
-        <input
-          type="text"
-          {...register("category")}
-          placeholder="Транспорт, Продукты и т.д."
-          className="w-full border border-neutral-300 px-3 py-2 bg-white focus:outline-none focus:border-black"
-        />
-        {errors.category && (
-          <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>
-        )}
-      </div>
-
-      <div>
-        <label className="block mb-1 font-medium">Сумма</label>
-        <input
-          type="number"
-          {...register("amount")}
-          placeholder="0.00"
-          className="w-full border border-neutral-300 px-3 py-2 bg-white focus:outline-none focus:border-black"
-        />
-        {errors.amount && (
-          <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
-        )}
-      </div>
-
-      <div>
-        <label className="block mb-1 font-medium">Тип</label>
-        <select
-          {...register("type")}
-          className="w-full border border-neutral-300 px-3 py-2 bg-white focus:outline-none focus:border-black"
-        >
-          <option value="">Выберите</option>
-          <option value="INCOME">Доход</option>
-          <option value="EXPENSE">Расход</option>
-        </select>
-        {errors.type && (
-          <p className="text-red-500 text-xs mt-1">{errors.type.message}</p>
-        )}
-      </div>
-
-      <div>
-        <label className="block mb-1 font-medium">Комментарий</label>
-        <textarea
-          {...register("comment")}
-          placeholder="Необязательно"
-          className="w-full border border-neutral-300 px-3 py-2 bg-white focus:outline-none focus:border-black resize-none"
-          rows={3}
-        />
-      </div>
+      <FormField name="date" label="Дата" type="date" register={register} />
+      <FormField name="category" label="Категория" register={register} />
+      <FormField
+        name="amount"
+        label="Сумма"
+        type="number"
+        register={register}
+      />
+      <FormField
+        name="type"
+        label="Тип"
+        type="select"
+        register={register}
+        options={[
+          { value: "INCOME", label: "Доход" },
+          { value: "EXPENSE", label: "Расход" },
+        ]}
+      />
+      <FormField
+        name="comment"
+        label="Коментарий"
+        type="textarea"
+        register={register}
+      />
 
       <button
         type="submit"
         disabled={mutation.isPending}
         className="w-full bg-black text-white py-2 px-4 font-medium tracking-wide uppercase disabled:opacity-50
-             transition-all duration-150 ease-in-out
-             hover:brightness-110 hover:scale-[1.02]
-             active:scale-[0.98] cursor-pointer"
+                   transition-all duration-150 ease-in-out
+                   hover:brightness-110 hover:scale-[1.02]
+                   active:scale-[0.98] cursor-pointer"
       >
         {mutation.isPending ? "Сохраняем..." : "Добавить"}
       </button>
