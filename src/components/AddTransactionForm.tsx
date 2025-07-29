@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FormField } from "./FormField";
+import { FormField } from "./UI/FormField";
+import { PrimaryButton } from "./UI/PrimaryButton";
 
 const schema = z.object({
   date: z.string().nonempty("Укажите дату"),
@@ -79,16 +80,9 @@ export const AddTransactionForm = () => {
         register={register}
       />
 
-      <button
-        type="submit"
-        disabled={mutation.isPending}
-        className="w-full bg-black text-white py-2 px-4 font-medium tracking-wide uppercase disabled:opacity-50
-                   transition-all duration-150 ease-in-out
-                   hover:brightness-110 hover:scale-[1.02]
-                   active:scale-[0.98] cursor-pointer"
-      >
-        {mutation.isPending ? "Сохраняем..." : "Добавить"}
-      </button>
+      <PrimaryButton type="submit" loading={mutation.isPending}>
+        {mutation.isPending ? "Сохранение...." : "Добавить"}
+      </PrimaryButton>
     </form>
   );
 };
