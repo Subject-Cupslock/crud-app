@@ -16,9 +16,13 @@ const schema = z.object({
   comment: z.string().optional(),
 });
 
+type AddTransactionFormProps = {
+  onSuccess?: () => void;
+};
+
 type FormData = z.infer<typeof schema>;
 
-export const AddTransactionForm = () => {
+export const AddTransactionForm = ({ onSuccess }: AddTransactionFormProps) => {
   const queryClient = useQueryClient();
 
   const {
@@ -43,6 +47,7 @@ export const AddTransactionForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       reset();
+      onSuccess?.();
     },
   });
 

@@ -1,6 +1,7 @@
 "use client";
 import { AddTransactionForm } from "@/components/AddTransactionForm";
 import { TransactionTable } from "@/components/TransactionVizualize/TransactionTable";
+import { AddTransactionButtonWithModal } from "@/components/UI/AddTransactionButtonWithModal";
 import { useQuery } from "@tanstack/react-query";
 import { Divide } from "lucide-react";
 
@@ -37,7 +38,7 @@ export default function Home() {
       ) : (
         <div className="text-neutral-500">Нет транзакции</div>
       )}
-      <AddTransactionForm />
+      <AddTransactionButtonWithModal />
     </div>
   );
 }
