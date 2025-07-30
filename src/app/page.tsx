@@ -1,6 +1,8 @@
 "use client";
 import { AddTransactionForm } from "@/components/AddTransactionForm";
+import { TransactionTable } from "@/components/TransactionVizualize/TransactionTable";
 import { useQuery } from "@tanstack/react-query";
+import { Divide } from "lucide-react";
 
 type Transactions = {
   id: string;
@@ -16,18 +18,25 @@ export default function Home() {
     queryKey: ["transactions"],
     queryFn: async () => {
       const res = await fetch("/api/transactions");
-      if (!res.ok) throw new Error("Failed to fetch transactions");
+      if (!res.ok) throw new Error("Ошибка загрузки");
       return res.json();
     },
   });
 
-  if (isLoading) return <div>Загрузка</div>;
-  if (error) return <div>Ошибка: {(error as Error).message}</div>;
+  if (isLoading) return <div className="p-4">Загрузка</div>;
+  if (error)
+    return (
+      <div className="p-4 text-red-500">Ошибка: {(error as Error).message}</div>
+    );
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-2">Транзакции</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Транзакции</h1>
+      {data && data.length > 0 ? (
+        <TransactionTable data={data} />
+      ) : (
+        <div className="text-neutral-500">Нет транзакции</div>
+      )}
       <AddTransactionForm />
     </div>
   );
