@@ -1,7 +1,11 @@
-import React from "react";
-import { TransactionRow } from "./TransactionRow";
+"use client";
 
-type Transactions = {
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { TransactionRow } from "./TransactionRow";
+import { ContextMenu } from "../UI/ContextMenu";
+
+type Transaction = {
   id: string;
   date: string;
   category: string;
@@ -10,7 +14,44 @@ type Transactions = {
   comment?: string;
 };
 
-export const TransactionTable = ({ data }: { data: Transactions[] }) => {
+export const TransactionTable = () => {
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    transactionId: string;
+  } | null>(null);
+
+  const { data = [] } = useQuery<Transaction[]>({
+    queryKey: ["transactions"],
+    queryFn: async () => {
+      const res = await fetch("/api/transactions");
+      return res.json();
+    },
+  });
+
+  const handleRightClick = (e: React.MouseEvent, transactionId: string) => {
+    e.preventDefault();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      transactionId,
+    });
+  };
+
+  const closeContext = () => {
+    setContextMenu(null);
+  };
+
+  const handleEdit = () => {
+    console.log("Edit", contextMenu?.transactionId);
+    closeContext();
+  };
+
+  const handleDelete = () => {
+    console.log("Delete", contextMenu?.transactionId);
+    closeContext();
+  };
+
   return (
     <div className="border border-neutral-200 text-sm text-neutral-800 mb-4">
       <table className="w-full table-auto">
@@ -25,10 +66,24 @@ export const TransactionTable = ({ data }: { data: Transactions[] }) => {
         </thead>
         <tbody>
           {data.map((tx) => (
-            <TransactionRow key={tx.id} {...tx} />
+            <TransactionRow
+              key={tx.id}
+              {...tx}
+              onRightClick={(e) => handleRightClick(e, tx.id)}
+            />
           ))}
         </tbody>
       </table>
+
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={closeContext}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 };

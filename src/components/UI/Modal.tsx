@@ -20,7 +20,7 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-neutral-400 hover:text-black transition cursor-pointer"
+          className="absolute top-2 right-4 text-neutral-400 hover:text-black transition cursor-pointer"
           aria-label="Закрыть"
         >
           ✕

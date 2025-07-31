@@ -1,11 +1,12 @@
 import React from "react";
 
-type PropsTransactionRow = {
+type Props = {
   date: string;
   category: string;
   amount: string;
   type: "INCOME" | "EXPENSE";
   comment?: string;
+  onRightClick: (e: React.MouseEvent) => void;
 };
 
 export const TransactionRow = ({
@@ -14,11 +15,16 @@ export const TransactionRow = ({
   amount,
   type,
   comment,
-}: PropsTransactionRow) => {
-  const formattedDate = new Date(date).toLocaleDateString("ru-RU");
+  onRightClick,
+}: Props) => {
   const isIncome = type === "INCOME";
+  const formattedDate = new Date(date).toLocaleDateString("ru-RU");
+
   return (
-    <tr className="border-t hover:bg-neutral-50 transition-colors">
+    <tr
+      className="border-t hover:bg-neutral-50 transition"
+      onContextMenu={onRightClick}
+    >
       <td className="px-4 py-2">{formattedDate}</td>
       <td className="px-4 py-2 font-medium">{category}</td>
       <td
