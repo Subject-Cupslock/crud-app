@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TransactionRow } from "./TransactionRow";
 import { ContextMenu } from "../UI/ContextMenu";
 
@@ -15,18 +15,45 @@ type Transaction = {
 };
 
 export const TransactionTable = () => {
+  const queryClient = useQueryClient();
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
     transactionId: string;
   } | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editData, setEditData] = useState<Transaction | null>(null);
 
-  const { data = [] } = useQuery<Transaction[]>({
-    queryKey: ["transactions"],
+  const { data = [], refetch } = useQuery<Transaction[]>({
+    queryKey: ["transactions", { page: 1, limit: 10 }],
     queryFn: async () => {
-      const res = await fetch("/api/transactions");
+      const res = await fetch("/api/transactions?page=1&limit=10");
       return res.json();
     },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: Transaction) =>
+      fetch("/api/transactions", {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => res.json()),
+    onSuccess: () => {
+      refetch();
+      setEditId(null);
+      setEditData(null);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      fetch("/api/transactions", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => res.json()),
+    onSuccess: () => refetch(),
   });
 
   const handleRightClick = (e: React.MouseEvent, transactionId: string) => {
@@ -42,14 +69,19 @@ export const TransactionTable = () => {
     setContextMenu(null);
   };
 
-  const handleEdit = () => {
-    console.log("Edit", contextMenu?.transactionId);
+  const handleEdit = (transaction: Transaction) => {
+    setEditId(transaction.id);
+    setEditData(transaction);
     closeContext();
   };
 
-  const handleDelete = () => {
-    console.log("Delete", contextMenu?.transactionId);
+  const handleDelete = (id: string) => {
+    deleteMutation.mutate(id);
     closeContext();
+  };
+
+  const handleSaveEdit = (updatedData: Transaction) => {
+    updateMutation.mutate(updatedData);
   };
 
   return (
@@ -65,13 +97,28 @@ export const TransactionTable = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((tx) => (
-            <TransactionRow
-              key={tx.id}
-              {...tx}
-              onRightClick={(e) => handleRightClick(e, tx.id)}
-            />
-          ))}
+          {data.map((tx) =>
+            editId === tx.id ? (
+              <TransactionRow
+                key={tx.id}
+                id={tx.id}
+                {...tx}
+                isEditing={true}
+                onSave={handleSaveEdit}
+                onCancel={() => {
+                  setEditId(null);
+                  setEditData(null);
+                }}
+              />
+            ) : (
+              <TransactionRow
+                key={tx.id}
+                {...tx}
+                onRightClick={(e) => handleRightClick(e, tx.id)}
+                onEdit={() => handleEdit(tx)}
+              />
+            )
+          )}
         </tbody>
       </table>
 
@@ -79,9 +126,11 @@ export const TransactionTable = () => {
         <ContextMenu
           x={contextMenu.x}
           y={contextMenu.y}
-          onClose={closeContext}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+          onClose={() => setContextMenu(null)}
+          onEdit={() =>
+            handleEdit(data.find((tx) => tx.id === contextMenu.transactionId)!)
+          }
+          onDelete={() => handleDelete(contextMenu.transactionId)}
         />
       )}
     </div>
