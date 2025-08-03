@@ -1,10 +1,19 @@
 import React, { useState } from "react";
 import { PrimaryButton } from "./PrimaryButton";
 import { Modal } from "./Modal";
-import { AddTransactionForm } from "../features/transaction/AddTransactionForm";
+import { TransactionForm } from "../features/transaction/TransactionForm";
+import { Transaction } from "@/types";
+import { useTransactionMutations } from "@/hooks/useTransactionsMutations";
 
 export const AddTransactionButtonWithModal = () => {
   const [open, setOpen] = useState(false);
+  const { create } = useTransactionMutations();
+
+  const handleSubmit = (data: Omit<Transaction, "id">) => {
+    create.mutate(data, {
+      onSuccess: () => setOpen(false),
+    });
+  };
 
   return (
     <>
@@ -14,7 +23,11 @@ export const AddTransactionButtonWithModal = () => {
         </PrimaryButton>
 
         <Modal isOpen={open} onClose={() => setOpen(false)}>
-          <AddTransactionForm onSuccess={() => setOpen(false)} />
+          <TransactionForm
+            mode="create"
+            onSubmit={handleSubmit}
+            onCancel={() => setOpen(false)}
+          />
         </Modal>
       </div>
     </>
