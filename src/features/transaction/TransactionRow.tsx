@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useForm, FieldValues } from "react-hook-form";
-import { FormField } from "../UI/FormField";
+import { FormField } from "../../ui/FormField";
 
 type Props = {
   id: string;
@@ -155,10 +155,7 @@ export const TransactionRow = ({
           {isIncome ? "Доход" : "Расход"}
         </span>
       </td>
-      <td className="px-4 py-2 text-neutral-500 italic">{comment || "-"}</td>
-      <td className="px-4 py-2">
-        <button onClick={onEdit}>Редактировать</button>
-      </td>
+      <td className="px-4 py-2 text-neutral-500 ">{comment || "-"}</td>
     </tr>
   );
 };

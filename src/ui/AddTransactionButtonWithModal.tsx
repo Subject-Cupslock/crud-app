@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { PrimaryButton } from "./PrimaryButton";
 import { Modal } from "./Modal";
-import { AddTransactionForm } from "../AddTransactionForm";
+import { AddTransactionForm } from "../features/transaction/AddTransactionForm";
 
 export const AddTransactionButtonWithModal = () => {
   const [open, setOpen] = useState(false);

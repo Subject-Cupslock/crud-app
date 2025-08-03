@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TransactionRow } from "./TransactionRow";
-import { ContextMenu } from "../UI/ContextMenu";
+import { ContextMenu } from "../../ui/ContextMenu";
 
 type Transaction = {
   id: string;
@@ -15,7 +15,6 @@ type Transaction = {
 };
 
 export const TransactionTable = () => {
-  const queryClient = useQueryClient();
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
