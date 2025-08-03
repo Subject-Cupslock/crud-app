@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormField } from "@/ui/FormField";
 import { PrimaryButton } from "@/ui/PrimaryButton";
+import { Transaction } from "@/types";
 
 const schema = z.object({
   date: z.string().nonempty("Укажите дату"),
@@ -16,7 +17,7 @@ const schema = z.object({
 type FormSchema = z.infer<typeof schema>;
 
 type Props = {
-  initialValues?: FormSchema;
+  initialValues?: Transaction;
   onSubmit: (data: FormSchema) => void;
   onCancel?: () => void;
   isSubmitting?: boolean;
@@ -45,7 +46,13 @@ export const TransactionForm = ({
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => {
+        if (initialValues?.id) {
+          onSubmit({ ...data, id: initialValues?.id });
+        } else {
+          onSubmit(data);
+        }
+      })}
       className="bg-white border p-6 space-y-5 text-sm text-neutral-800"
     >
       <FormField name="date" label="Дата" type="date" register={register} />

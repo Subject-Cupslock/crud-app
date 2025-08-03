@@ -24,7 +24,7 @@ export async function createTransaction(
 export async function updateTransaction(
   data: Transaction
 ): Promise<Transaction> {
-  const res = await fetch(`/api/transactions/${data.id}`, {
+  const res = await fetch(`/api/transactions`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -34,8 +34,10 @@ export async function updateTransaction(
 }
 
 export async function deleteTransaction(id: string): Promise<void> {
-  const res = await fetch(`/api/transactions/${id}`, {
+  const res = await fetch(`/api/transactions`, {
     method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id }),
   });
   if (!res.ok) throw new Error("Ошибка при удалении транзакции");
 }
