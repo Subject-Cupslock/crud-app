@@ -80,7 +80,7 @@ export const TransactionForm = ({
         register={register}
       />
 
-      <div className="flex gap-2">
+      <div className=" gap-2">
         <PrimaryButton type="submit" loading={isSubmitting}>
           {isSubmitting ? "Сохранение..." : "Сохранить"}
         </PrimaryButton>
@@ -88,7 +88,7 @@ export const TransactionForm = ({
           <button
             type="button"
             onClick={onCancel}
-            className="text-sm text-neutral-500 hover:underline"
+            className="text-sm w-full mt-4 text-neutral-500 hover:underline cursor-pointer"
           >
             Отмена
           </button>

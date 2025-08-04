@@ -8,6 +8,7 @@ import { TransactionRow } from "./TransactionRow";
 import { ContextMenu } from "@/ui/ContextMenu";
 import { Modal } from "@/ui/Modal";
 import { TransactionForm } from "@/features/transaction/TransactionForm";
+import { DeleteTransactionModal } from "@/ui/DeleteTransactionModal";
 
 export const TransactionTable = () => {
   const { data: transactions = [] } = useQuery<Transaction[]>({
@@ -17,6 +18,9 @@ export const TransactionTable = () => {
       return res.json();
     },
   });
+
+  const [deleteTxId, setDeleteTxId] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { update, remove } = useTransactionMutations();
 
@@ -49,10 +53,14 @@ export const TransactionTable = () => {
   };
 
   const handleDelete = (txId: string) => {
-    if (confirm("Удалить транзакцию?")) {
+    const skip = localStorage.getItem("skipDeleteConfirmation") === "true";
+    if (skip) {
       remove.mutate(txId);
+      handleCloseMenu();
+    } else {
+      setDeleteTxId(txId);
+      setShowDeleteModal(true);
     }
-    handleCloseMenu();
   };
 
   const handleModalClose = () => setEditingTransaction(null);
@@ -97,6 +105,19 @@ export const TransactionTable = () => {
           />
         )}
       </div>
+
+      <DeleteTransactionModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={() => {
+          if (deleteTxId) {
+            remove.mutate(deleteTxId);
+            setDeleteTxId(null);
+          }
+          setShowDeleteModal(false);
+          handleCloseMenu();
+        }}
+      />
 
       <Modal isOpen={!!editingTransaction} onClose={handleModalClose}>
         {editingTransaction && (
