@@ -2,6 +2,7 @@
 import { AddTransactionForm } from "@/features/transaction/AddTransactionForm";
 import { TransactionTable } from "@/features/transaction/TransactionTable";
 import { AddTransactionButtonWithModal } from "@/ui/AddTransactionButtonWithModal";
+import { SettingsMenu } from "@/ui/SettingsMenu";
 import { useQuery } from "@tanstack/react-query";
 import { Divide } from "lucide-react";
 
@@ -32,7 +33,10 @@ export default function Home() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Транзакции</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold mb-4">Транзакции</h1>
+        <SettingsMenu />
+      </div>
       {data && data.length > 0 ? (
         <TransactionTable />
       ) : (
