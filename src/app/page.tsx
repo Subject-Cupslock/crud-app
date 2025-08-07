@@ -40,7 +40,7 @@ export default function Home() {
       {data && data.length > 0 ? (
         <TransactionTable />
       ) : (
-        <div className="text-neutral-500">Нет транзакции</div>
+        <div className="text-neutral-500 mb-4">Нет транзакции</div>
       )}
       <AddTransactionButtonWithModal />
     </div>

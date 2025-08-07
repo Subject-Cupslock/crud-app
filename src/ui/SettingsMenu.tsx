@@ -1,4 +1,3 @@
-// components/SettingsMenu.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -13,9 +12,10 @@ export const SettingsMenu = () => {
     setDeleteConfirmEnabled(flag !== "true");
   }, []);
 
-  const resetDeleteConfirm = () => {
-    localStorage.removeItem("disableDeleteConfirm");
-    setDeleteConfirmEnabled(true);
+  const toggleDeleteConfirm = () => {
+    const newValue = !deleteConfirmEnabled;
+    setDeleteConfirmEnabled(newValue);
+    localStorage.setItem("disableDeleteConfirm", (!newValue).toString());
   };
 
   return (
@@ -34,16 +34,14 @@ export const SettingsMenu = () => {
 
           <div className="flex justify-between items-center mb-3">
             <span>Подтверждение удаления</span>
-            {deleteConfirmEnabled ? (
-              <span className="text-green-600 font-medium">Включено</span>
-            ) : (
-              <button
-                onClick={resetDeleteConfirm}
-                className="text-blue-600 hover:underline text-sm"
-              >
-                Сбросить
-              </button>
-            )}
+            <button
+              onClick={toggleDeleteConfirm}
+              className="text-blue-600 hover:underline text-sm"
+            >
+              {deleteConfirmEnabled
+                ? "Включено (нажми, чтобы выключить)"
+                : "Выключено (нажми, чтобы включить)"}
+            </button>
           </div>
 
           <button
