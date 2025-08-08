@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal } from "./Modal";
 import { PrimaryButton } from "./PrimaryButton";
+import { useSettingsStore } from "@/store/useSettingsStore";
 
 type Props = {
   isOpen: boolean;
@@ -14,10 +15,13 @@ export const DeleteTransactionModal = ({
   onConfirm,
 }: Props) => {
   const [dontAskAgain, setDontAskAgain] = useState(false);
+  const setSkipDeleteConfirmation = useSettingsStore(
+    (s) => s.setSkipDeleteConfirmation
+  );
 
   const handleConfirm = () => {
     if (dontAskAgain) {
-      localStorage.setItem("skipDeleteConfirmation", "true");
+      setSkipDeleteConfirmation(true);
     }
     onConfirm();
     onClose();

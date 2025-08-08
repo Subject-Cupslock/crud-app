@@ -9,6 +9,7 @@ import { ContextMenu } from "@/ui/ContextMenu";
 import { Modal } from "@/ui/Modal";
 import { TransactionForm } from "@/features/transaction/TransactionForm";
 import { DeleteTransactionModal } from "@/ui/DeleteTransactionModal";
+import { useSettingsStore } from "@/store/useSettingsStore";
 
 export const TransactionTable = () => {
   const { data: transactions = [] } = useQuery<Transaction[]>({
@@ -33,6 +34,10 @@ export const TransactionTable = () => {
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
 
+  const skipDeleteConfirmation = useSettingsStore(
+    (s) => s.skipDeleteConfirmation
+  );
+
   const handleRightClick = (e: React.MouseEvent, txId: string) => {
     e.preventDefault();
     setContextMenu({
@@ -53,8 +58,7 @@ export const TransactionTable = () => {
   };
 
   const handleDelete = (txId: string) => {
-    const skip = localStorage.getItem("skipDeleteConfirmation") === "true";
-    if (skip) {
+    if (skipDeleteConfirmation) {
       remove.mutate(txId);
       handleCloseMenu();
     } else {

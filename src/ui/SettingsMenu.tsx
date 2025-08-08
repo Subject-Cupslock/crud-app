@@ -2,21 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { Settings } from "lucide-react";
+import { useSettingsStore } from "@/store/useSettingsStore";
 
 export const SettingsMenu = () => {
   const [open, setOpen] = useState(false);
-  const [deleteConfirmEnabled, setDeleteConfirmEnabled] = useState(true);
-
-  useEffect(() => {
-    const flag = localStorage.getItem("disableDeleteConfirm");
-    setDeleteConfirmEnabled(flag !== "true");
-  }, []);
-
-  const toggleDeleteConfirm = () => {
-    const newValue = !deleteConfirmEnabled;
-    setDeleteConfirmEnabled(newValue);
-    localStorage.setItem("disableDeleteConfirm", (!newValue).toString());
-  };
+  const skipDeleteConfirmation = useSettingsStore(
+    (s) => s.skipDeleteConfirmation
+  );
+  const resetDeleteConfirmation = useSettingsStore(
+    (s) => s.resetDeleteConfirmation
+  );
 
   return (
     <div className="relative">
@@ -34,14 +29,11 @@ export const SettingsMenu = () => {
 
           <div className="flex justify-between items-center mb-3">
             <span>Подтверждение удаления</span>
-            <button
-              onClick={toggleDeleteConfirm}
-              className="text-blue-600 hover:underline text-sm"
-            >
-              {deleteConfirmEnabled
-                ? "Включено (нажми, чтобы выключить)"
-                : "Выключено (нажми, чтобы включить)"}
-            </button>
+            {!skipDeleteConfirmation ? (
+              <span className="text-green-600 font-medium">Включено</span>
+            ): (
+              <button onClick={resetDeleteConfirmation} className="text-blue-600 hover:underline text-sm w-full">Включить</button>
+            )}
           </div>
 
           <button
