@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type ModalProps = {
   isOpen: boolean;
@@ -10,24 +11,33 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-md mx-auto"
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
       >
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-4 text-neutral-400 hover:text-black transition cursor-pointer"
-          aria-label="Закрыть"
+        <motion.div
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-md mx-auto"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ duration: 0.2 }}
         >
-          ✕
-        </button>
+          <button
+            onClick={onClose}
+            className="absolute top-2 right-4 text-neutral-400 hover:text-black transition cursor-pointer"
+            aria-label="Закрыть"
+          >
+            ✕
+          </button>
 
-        {children}
-      </div>
-    </div>
+          {children}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };

@@ -10,6 +10,7 @@ import { Modal } from "@/ui/Modal";
 import { TransactionForm } from "@/features/transaction/TransactionForm";
 import { DeleteTransactionModal } from "@/ui/DeleteTransactionModal";
 import { useSettingsStore } from "@/store/useSettingsStore";
+import { AnimatePresence } from "framer-motion";
 
 export const TransactionTable = () => {
   const { data: transactions = [] } = useQuery<Transaction[]>({
@@ -22,6 +23,7 @@ export const TransactionTable = () => {
 
   const [deleteTxId, setDeleteTxId] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [lastAddedId, setLastAddedId] = useState<string | null>(null);
 
   const { update, remove } = useTransactionMutations();
 
@@ -68,10 +70,14 @@ export const TransactionTable = () => {
   };
 
   const handleModalClose = () => setEditingTransaction(null);
-
+  //.....
   const handleFormSubmit = (updated: Transaction) => {
     update.mutate(updated, {
-      onSuccess: handleModalClose,
+      onSuccess: (newTx) => {
+        setLastAddedId(newTx.id);
+        setTimeout(() => setLastAddedId(null), 2000);
+        handleCloseMenu();
+      },
     });
   };
 
@@ -89,13 +95,16 @@ export const TransactionTable = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((tx) => (
-              <TransactionRow
-                key={tx.id}
-                {...tx}
-                onRightClick={(e) => handleRightClick(e, tx.id)}
-              />
-            ))}
+            <AnimatePresence>
+              {transactions.map((tx) => (
+                <TransactionRow
+                  key={tx.id}
+                  {...tx}
+                  highlight={lastAddedId === tx.id}
+                  onRightClick={(e) => handleRightClick(e, tx.id)}
+                />
+              ))}
+            </AnimatePresence>
           </tbody>
         </table>
 

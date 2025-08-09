@@ -1,5 +1,7 @@
 "use client";
 import React from "react";
+import { motion } from "framer-motion";
+import clsx from "clsx";
 
 type Props = {
   id: string;
@@ -8,6 +10,7 @@ type Props = {
   amount: string;
   type: "INCOME" | "EXPENSE";
   comment?: string;
+  highlight?: boolean;
   onRightClick?: (e: React.MouseEvent) => void;
   onEdit?: () => void;
 };
@@ -21,15 +24,24 @@ export const TransactionRow = ({
   comment,
   onRightClick,
   onEdit,
+  highlight = false,
 }: Props) => {
   const isIncome = type === "INCOME";
   const formattedDate = new Date(date).toLocaleDateString("ru-RU");
 
   return (
-    <tr
-      className="border-t hover:bg-neutral-50 transition"
+    <motion.tr
+      className={clsx(
+        "transition-colors cursor-pointer",
+        highlight ? "bg-green-300" : "hover:bg-neutral-50"
+      )}
       onContextMenu={onRightClick}
       onDoubleClick={onEdit}
+      layout
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 8 }}
+      transition={{ duration: 0.25 }}
     >
       <td className="px-4 py-2">{formattedDate}</td>
       <td className="px-4 py-2 font-medium">{category}</td>
@@ -51,6 +63,6 @@ export const TransactionRow = ({
         </span>
       </td>
       <td className="px-4 py-2 text-neutral-500">{comment || "-"}</td>
-    </tr>
+    </motion.tr>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Props = {
   x: number;
@@ -34,25 +35,31 @@ export const ContextMenu = ({ x, y, onClose, onEdit, onDelete }: Props) => {
   }, [onClose]);
 
   return (
-    <div
-      ref={ref}
-      className="fixed bg-white border rounded shadow-md z-50 w-40"
-      style={{ top: y, left: x }}
-    >
-      <ul className="text-sm text-neutral-700">
-        <li
-          onClick={onEdit}
-          className="px-4 py-2 hover:bg-neutral-100 cursor-pointer"
-        >
-          Редактировать
-        </li>
-        <li
-          onClick={onDelete}
-          className="px-4 py-2 hover:bg-neutral-100 cursor-pointer text-red-600"
-        >
-          Удалить
-        </li>
-      </ul>
-    </div>
+    <AnimatePresence>
+      <motion.div
+        ref={ref}
+        className="fixed bg-white border rounded shadow-md z-50 w-40"
+        style={{ top: y, left: x }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.15 }}
+      >
+        <ul className="text-sm text-neutral-700">
+          <li
+            onClick={onEdit}
+            className="px-4 py-2 hover:bg-neutral-100 cursor-pointer"
+          >
+            Редактировать
+          </li>
+          <li
+            onClick={onDelete}
+            className="px-4 py-2 hover:bg-neutral-100 cursor-pointer text-red-600"
+          >
+            Удалить
+          </li>
+        </ul>
+      </motion.div>
+    </AnimatePresence>
   );
 };
